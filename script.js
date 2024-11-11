@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     getConnectedDevices();
 });
 
-// 获取设备列表的函数
+// 获设备列表的函数
 async function getConnectedDevices() {
     const refreshButton = document.getElementById('refreshDevices');
     const refreshIcon = refreshButton.querySelector('.bi-arrow-clockwise');
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCommandPreview();
     });
 
-    // 初始化所有工具提示
+    // 初始化所具提示
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
@@ -470,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCommandPreview();
     });
 
-    // 使用传统粘贴模式
+    // 使用传统粘贴式
     document.getElementById('legacyPaste').addEventListener('change', (e) => {
         if (e.target.checked) {
             config['--legacy-paste'] = true;
@@ -829,6 +829,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxSizeInput = document.getElementById('maxSize');
     if (maxSizeInput) {
         maxSizeInput.addEventListener('input', (e) => {
+            console.log('最大尺寸变更:', e.target.value);
+            if (e.target.value) {
                 config['--max-size'] = e.target.value;
             } else {
                 delete config['--max-size'];
@@ -836,6 +838,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCommandPreview();
         });
     }
+
+    // 显示缓冲延迟
     const displayBufferInput = document.getElementById('displayBuffer');
     if (displayBufferInput) {
         displayBufferInput.addEventListener('input', (e) => {
