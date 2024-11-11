@@ -1,7 +1,7 @@
 // script.js 初始化
 console.log('script.js 开始加载');
 
-// 存储所有配置项的值
+// 存储所有scrcpy配置项的键值对
 let config = {};
 
 // 确保在 DOM 加载完成后再初始化
@@ -103,7 +103,7 @@ async function getConnectedDevices() {
     }
 }
 
-// 处理设备选择变更事件
+// 监听设备选择下拉框的change事件，更新序列号配置
 document.addEventListener('DOMContentLoaded', function() {
     const deviceList = document.getElementById('deviceList');
     if (deviceList) {
@@ -1394,7 +1394,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// 根据设备参数和使用场景计算推荐的视频比特率
+/**
+ * 根据设备参数和使用场景计算推荐的视频比特率
+ * @param {number} maxSize - 最大尺寸
+ * @param {number} maxFps - 最大帧率
+ * @param {string} codec - 视频编码格式(h264/h265/av1)
+ * @param {string} scene - 使用场景(普通/复杂)
+ * @returns {number} 推荐的视频比特率(Mbps)
+ */
 function recommendVideoBitrate(maxSize, maxFps, codec, scene) {
     // 假设宽高比为16:9，可根据需要调整
     const width = maxSize;

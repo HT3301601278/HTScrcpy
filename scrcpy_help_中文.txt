@@ -335,7 +335,7 @@
  
      --tunnel-port=端口
          设置 adb 的 TCP 端口以连接到 scrcpy 服务器。此选项会自动启用 --force-adb-forward。
-         默认值为 0（不强制）：用于建立隧道的本地端口将被使用。
+         默认值为 0（不强制）：用于建立的本地端口将被使用。
  
      -v, --version
          打印 scrcpy 的版本。

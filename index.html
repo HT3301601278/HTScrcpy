@@ -748,7 +748,7 @@
                                                     <label class="form-label">键盘模式
                                                         <i class="bi bi-question-circle tooltip-icon" 
                                                            data-bs-toggle="tooltip" 
-                                                           title="disabled: 禁用键盘&#13;sdk: 使用Android系统API&#13;uhid: 模拟物理键盘&#13;aoa: 使用AOAv2协议"></i>
+                                                           title="disabled: 完全禁用键盘输入&#13;sdk: 使用Android系统API处理键盘输入&#13;uhid: 模拟物理USB键盘设备&#13;aoa: 使用Android开放配件协议v2"></i>
                                                     </label>
                                                     <select class="form-select" id="keyboardMode">
                                                         <option value="">默认</option>
@@ -763,7 +763,7 @@
                                                     <label class="form-label">鼠标模式
                                                         <i class="bi bi-question-circle tooltip-icon" 
                                                            data-bs-toggle="tooltip" 
-                                                           title="disabled: 禁用鼠标&#13;sdk: 使用Android系统API&#13;uhid: 模拟物理鼠标&#13;aoa: 使用AOAv2协议"></i>
+                                                           title="disabled: 完全禁用鼠标输入&#13;sdk: 使用Android系统API处理鼠标输入&#13;uhid: 模拟物理USB鼠标设备&#13;aoa: 使用Android开放配件协议v2"></i>
                                                     </label>
                                                     <select class="form-select" id="mouseMode">
                                                         <option value="">默认</option>
@@ -780,7 +780,7 @@
                                                     <label class="form-label">游戏手柄模式
                                                         <i class="bi bi-question-circle tooltip-icon" 
                                                            data-bs-toggle="tooltip" 
-                                                           title="disabled: 禁用游戏手柄&#13;uhid: 模拟物理游戏手柄&#13;aoa: 使用AOAv2协议"></i>
+                                                           title="disabled: 完全禁用游戏手柄输入&#13;uhid: 模拟物理USB游戏手柄设备&#13;aoa: 使用Android开放配件协议v2"></i>
                                                     </label>
                                                     <select class="form-select" id="gamepadMode">
                                                         <option value="">默认</option>
@@ -817,7 +817,7 @@
                                                 <div class="col-md-4">
                                                     <div class="form-check mb-2">
                                                         <input class="form-check-input" type="checkbox" id="preferText">
-                                                        <label class="form-check-label">优先本输入</label>
+                                                        <label class="form-check-label">优先使用文本输入</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -888,14 +888,14 @@
                                                     </label>
                                                     <select class="form-select" id="recordFormat">
                                                         <option value="">自动（根据扩展名）</option>
-                                                        <option value="mp4">MP4</option>
-                                                        <option value="mkv">MKV</option>
+                                                        <option value="mp4">MP4（视频）</option>
+                                                        <option value="mkv">MKV（视频）</option>
                                                         <option value="m4a">M4A（仅音频）</option>
                                                         <option value="mka">MKA（仅音频）</option>
-                                                        <option value="opus">OPUS（仅音频）</option>
-                                                        <option value="aac">AAC（仅音频）</option>
-                                                        <option value="flac">FLAC（仅音频）</option>
-                                                        <option value="wav">WAV（仅音频）</option>
+                                                        <option value="opus">OPUS（仅音频，高压缩率）</option>
+                                                        <option value="aac">AAC（仅音频，常用格式）</option>
+                                                        <option value="flac">FLAC（仅音频，无损格式）</option>
+                                                        <option value="wav">WAV（仅音频，原始格式）</option>
                                                     </select>
                                                 </div>
 
@@ -1034,11 +1034,11 @@
                                                     <label class="form-label">日志级别</label>
                                                     <select class="form-select" id="logLevel">
                                                         <option value="">默认（info）</option>
-                                                        <option value="verbose">详细 (verbose)</option>
-                                                        <option value="debug">调试 (debug)</option>
-                                                        <option value="info">信息 (info)</option>
-                                                        <option value="warn">警告 (warn)</option>
-                                                        <option value="error">错误 (error)</option>
+                                                        <option value="verbose">详细 (verbose) - 输出所有日志</option>
+                                                        <option value="debug">调试 (debug) - 输出调试信息</option>
+                                                        <option value="info">信息 (info) - 输出普通信息</option>
+                                                        <option value="warn">警告 (warn) - 仅输出警告信息</option>
+                                                        <option value="error">错误 (error) - 仅输出错误信息</option>
                                                     </select>
                                                 </div>
 
@@ -1049,7 +1049,7 @@
                                                            title="指定SDL渲染驱动"></i>
                                                     </label>
                                                     <input type="text" class="form-control" id="renderDriver" 
-                                                           placeholder="例如：direct3d">
+                                                           placeholder="例如：direct3d, opengl, software">
                                                 </div>
 
                                                 <div class="col-md-6 mb-3">
