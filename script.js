@@ -1450,3 +1450,61 @@ function updateRecommendedBitrate() {
         updateCommandPreview();
     }
 }
+
+// 添加窗口模式互斥处理
+document.querySelectorAll('.window-mode').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            // 取消选中其他的窗口模式复选框
+            document.querySelectorAll('.window-mode').forEach(otherCheckbox => {
+                if (otherCheckbox !== this) {
+                    otherCheckbox.checked = false;
+                }
+            });
+        }
+    });
+});
+
+// 视频源和摄像头设置的联动
+document.addEventListener('DOMContentLoaded', () => {
+    const videoSourceSelect = document.getElementById('videoSource');
+    const cameraSettings = document.getElementById('cameraSettings');
+    
+    if (videoSourceSelect && cameraSettings) {
+        // 初始化时隐藏摄像头设置
+        cameraSettings.style.display = 'none';
+        
+        videoSourceSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'camera') {
+                // 当选择摄像头作为视频源时显示摄像头设置
+                cameraSettings.style.display = 'block';
+                // 设置视频源参数
+                config['--video-source'] = 'camera';
+            } else {
+                // 其他情况隐藏摄像头设置并清除相关配置
+                cameraSettings.style.display = 'none';
+                // 清除所有摄像头相关的配置
+                delete config['--video-source'];
+                delete config['--camera-facing'];
+                delete config['--camera-size'];
+                delete config['--camera-ar'];
+                delete config['--camera-fps'];
+                delete config['--camera-high-speed'];
+            }
+            updateCommandPreview();
+        });
+    }
+});
+
+// 摄像头朝向设置
+const cameraFacingSelect = document.getElementById('cameraFacing');
+if (cameraFacingSelect) {
+    cameraFacingSelect.addEventListener('change', (e) => {
+        if (e.target.value && document.getElementById('videoSource').value === 'camera') {
+            config['--camera-facing'] = e.target.value;
+        } else {
+            delete config['--camera-facing'];
+        }
+        updateCommandPreview();
+    });
+}
