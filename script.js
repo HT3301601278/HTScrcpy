@@ -620,7 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('windowHeight').addEventListener('input', (e) => {
         if (e.target.value) {
-            // 根据帮助文档，直接使用数值
+            // 根帮助文档，直接使用数值
             config['--window-height'] = e.target.value;
         } else {
             delete config['--window-height'];
@@ -821,4 +821,527 @@ alwaysOnTop.addEventListener('change', updateCommand);
 
 // 初始化命令预览
 updateCommand();
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 显示参数设置相关的事件监听器
+    
+    // 最大尺寸
+    const maxSizeInput = document.getElementById('maxSize');
+    if (maxSizeInput) {
+        maxSizeInput.addEventListener('input', (e) => {
+                config['--max-size'] = e.target.value;
+            } else {
+                delete config['--max-size'];
+            }
+            updateCommandPreview();
+        });
+    }
+    const displayBufferInput = document.getElementById('displayBuffer');
+    if (displayBufferInput) {
+        displayBufferInput.addEventListener('input', (e) => {
+            console.log('显示缓冲延迟变更:', e.target.value);
+            if (e.target.value) {
+                config['--display-buffer'] = e.target.value;
+            } else {
+                delete config['--display-buffer'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 显示ID
+    const displayIdInput = document.getElementById('displayId');
+    if (displayIdInput) {
+        displayIdInput.addEventListener('input', (e) => {
+            console.log('显示ID变更:', e.target.value);
+            if (e.target.value) {
+                config['--display-id'] = e.target.value;
+            } else {
+                delete config['--display-id'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 屏幕裁剪
+    const cropInput = document.getElementById('crop');
+    if (cropInput) {
+        cropInput.addEventListener('input', (e) => {
+            console.log('屏幕裁剪变更:', e.target.value);
+            if (e.target.value) {
+                const cropPattern = /^\d+:\d+:\d+:\d+$/;
+                if (cropPattern.test(e.target.value)) {
+                    config['--crop'] = e.target.value;
+                } else {
+                    delete config['--crop'];
+                }
+            } else {
+                delete config['--crop'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 显示和录制方向
+    const orientationSelect = document.getElementById('orientation');
+    if (orientationSelect) {
+        orientationSelect.addEventListener('change', (e) => {
+            console.log('方向变更:', e.target.value);
+            if (e.target.value) {
+                config['--rotation'] = e.target.value;
+            } else {
+                delete config['--rotation'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 锁定视频方向
+    const lockVideoOrientationSelect = document.getElementById('lockVideoOrientation');
+    if (lockVideoOrientationSelect) {
+        lockVideoOrientationSelect.addEventListener('change', (e) => {
+            console.log('锁定视频方向变更:', e.target.value);
+            if (e.target.value) {
+                config['--lock-video-orientation'] = e.target.value;
+            } else {
+                delete config['--lock-video-orientation'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 更新命令预览函数
+    function updateCommandPreview() {
+        let command = 'scrcpy';
+        
+        // 遍历配置对象，构建命令
+        for (let key in config) {
+            if (config[key] !== null && config[key] !== undefined && config[key] !== '') {
+                if (typeof config[key] === 'boolean') {
+                    command += ` ${key}`;
+                } else {
+                    // 如果值中包含空格，则用引号包裹
+                    const value = String(config[key]);
+                    if (value.includes(' ')) {
+                        command += ` ${key}="${value}"`;
+                    } else {
+                        command += ` ${key}=${value}`;
+                    }
+                }
+            }
+        }
+        
+        console.log('当前配置:', config);
+        console.log('生成的命令:', command);
+        
+        const commandPreview = document.getElementById('commandPreview');
+        if (commandPreview) {
+            commandPreview.textContent = command;
+        }
+    }
+
+    // 初始化命令预览
+    updateCommandPreview();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 摄像头设置相关的事件监听器
+    
+    // 摄像头ID
+    const cameraIdInput = document.getElementById('cameraId');
+    if (cameraIdInput) {
+        cameraIdInput.addEventListener('input', (e) => {
+            console.log('摄像头ID变更:', e.target.value);
+            if (e.target.value) {
+                config['--camera-id'] = e.target.value;
+            } else {
+                delete config['--camera-id'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 摄像头朝向
+    const cameraFacingSelect = document.getElementById('cameraFacing');
+    if (cameraFacingSelect) {
+        cameraFacingSelect.addEventListener('change', (e) => {
+            console.log('摄像头朝向变更:', e.target.value);
+            if (e.target.value) {
+                config['--camera-facing'] = e.target.value;
+            } else {
+                delete config['--camera-facing'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 摄像头分辨率
+    const cameraSizeInput = document.getElementById('cameraSize');
+    if (cameraSizeInput) {
+        cameraSizeInput.addEventListener('input', (e) => {
+            console.log('摄像头分辨率变更:', e.target.value);
+            if (e.target.value) {
+                const sizePattern = /^\d+x\d+$/;
+                if (sizePattern.test(e.target.value)) {
+                    config['--camera-size'] = e.target.value;
+                } else {
+                    delete config['--camera-size'];
+                }
+            } else {
+                delete config['--camera-size'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 摄像头宽高比
+    const cameraArInput = document.getElementById('cameraAr');
+    if (cameraArInput) {
+        cameraArInput.addEventListener('input', (e) => {
+            console.log('摄像头宽高比变更:', e.target.value);
+            if (e.target.value) {
+                const arPattern = /^\d+:\d+$/;
+                if (arPattern.test(e.target.value)) {
+                    config['--camera-ar'] = e.target.value;
+                } else {
+                    delete config['--camera-ar'];
+                }
+            } else {
+                delete config['--camera-ar'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 摄像头帧率
+    const cameraFpsInput = document.getElementById('cameraFps');
+    if (cameraFpsInput) {
+        cameraFpsInput.addEventListener('input', (e) => {
+            console.log('摄像头帧率变更:', e.target.value);
+            if (e.target.value) {
+                config['--camera-fps'] = e.target.value;
+            } else {
+                delete config['--camera-fps'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 高速���像头模式
+    const cameraHighSpeedCheckbox = document.getElementById('cameraHighSpeed');
+    if (cameraHighSpeedCheckbox) {
+        cameraHighSpeedCheckbox.addEventListener('change', (e) => {
+            console.log('高速摄像头模式变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--camera-high-speed'] = true;
+            } else {
+                delete config['--camera-high-speed'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 显示/隐藏摄像头设置
+    const videoSourceSelect = document.getElementById('videoSource');
+    const cameraSettings = document.getElementById('cameraSettings');
+    if (videoSourceSelect && cameraSettings) {
+        videoSourceSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'camera') {
+                cameraSettings.style.display = 'block';
+            } else {
+                cameraSettings.style.display = 'none';
+                // 清除所有摄像头相关的配置
+                delete config['--camera-id'];
+                delete config['--camera-facing'];
+                delete config['--camera-size'];
+                delete config['--camera-ar'];
+                delete config['--camera-fps'];
+                delete config['--camera-high-speed'];
+            }
+            updateCommandPreview();
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 设备控制相关的事件监听器
+    
+    // 保持设备唤醒
+    const stayAwakeCheckbox = document.getElementById('stayAwake');
+    if (stayAwakeCheckbox) {
+        stayAwakeCheckbox.addEventListener('change', (e) => {
+            console.log('保持设备唤醒变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--stay-awake'] = true;
+            } else {
+                delete config['--stay-awake'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 显示触摸点
+    const showTouchesCheckbox = document.getElementById('showTouches');
+    if (showTouchesCheckbox) {
+        showTouchesCheckbox.addEventListener('change', (e) => {
+            console.log('显示触摸点变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--show-touches'] = true;
+            } else {
+                delete config['--show-touches'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 关闭设备屏幕
+    const turnScreenOffCheckbox = document.getElementById('turnScreenOff');
+    if (turnScreenOffCheckbox) {
+        turnScreenOffCheckbox.addEventListener('change', (e) => {
+            console.log('关闭设备屏幕变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--turn-screen-off'] = true;
+            } else {
+                delete config['--turn-screen-off'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 禁用屏幕保护
+    const disableScreensaverCheckbox = document.getElementById('disableScreensaver');
+    if (disableScreensaverCheckbox) {
+        disableScreensaverCheckbox.addEventListener('change', (e) => {
+            console.log('禁用屏幕保护变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--disable-screensaver'] = true;
+            } else {
+                delete config['--disable-screensaver'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 启动时不点亮屏幕
+    const noPowerOnCheckbox = document.getElementById('noPowerOn');
+    if (noPowerOnCheckbox) {
+        noPowerOnCheckbox.addEventListener('change', (e) => {
+            console.log('启动时不点亮屏幕变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--no-power-on'] = true;
+            } else {
+                delete config['--no-power-on'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 关闭时关闭屏幕
+    const powerOffOnCloseCheckbox = document.getElementById('powerOffOnClose');
+    if (powerOffOnCloseCheckbox) {
+        powerOffOnCloseCheckbox.addEventListener('change', (e) => {
+            console.log('关闭时关闭屏幕变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--power-off-on-close'] = true;
+            } else {
+                delete config['--power-off-on-close'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 强制使用adb forward
+    const forceAdbForwardCheckbox = document.getElementById('forceAdbForward');
+    if (forceAdbForwardCheckbox) {
+        forceAdbForwardCheckbox.addEventListener('change', (e) => {
+            console.log('强制使用adb forward变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--force-adb-forward'] = true;
+            } else {
+                delete config['--force-adb-forward'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 关闭时结束adb
+    const killAdbOnCloseCheckbox = document.getElementById('killAdbOnClose');
+    if (killAdbOnCloseCheckbox) {
+        killAdbOnCloseCheckbox.addEventListener('change', (e) => {
+            console.log('关闭时结束adb变更:', e.target.checked);
+            if (e.target.checked) {
+                config['--kill-adb-on-close'] = true;
+            } else {
+                delete config['--kill-adb-on-close'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 隧道主机
+    const tunnelHostInput = document.getElementById('tunnelHost');
+    if (tunnelHostInput) {
+        tunnelHostInput.addEventListener('input', (e) => {
+            console.log('隧道主机变更:', e.target.value);
+            if (e.target.value) {
+                config['--tunnel-host'] = e.target.value;
+            } else {
+                delete config['--tunnel-host'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 隧道端口
+    const tunnelPortInput = document.getElementById('tunnelPort');
+    if (tunnelPortInput) {
+        tunnelPortInput.addEventListener('input', (e) => {
+            console.log('隧道端口变更:', e.target.value);
+            if (e.target.value) {
+                config['--tunnel-port'] = e.target.value;
+            } else {
+                delete config['--tunnel-port'];
+            }
+            updateCommandPreview();
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 连接设置相关的事件监听器
+    
+    // 强制使用adb forward
+    const forceAdbForward = document.getElementById('forceAdbForward');
+    if (forceAdbForward) {
+        forceAdbForward.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                config['--force-adb-forward'] = true;
+            } else {
+                delete config['--force-adb-forward'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 关闭时结束adb
+    const killAdbOnClose = document.getElementById('killAdbOnClose');
+    if (killAdbOnClose) {
+        killAdbOnClose.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                config['--kill-adb-on-close'] = true;
+            } else {
+                delete config['--kill-adb-on-close'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 隧道主机
+    const tunnelHost = document.getElementById('tunnelHost');
+    if (tunnelHost) {
+        tunnelHost.addEventListener('input', (e) => {
+            if (e.target.value.trim()) {
+                config['--tunnel-host'] = e.target.value.trim();
+            } else {
+                delete config['--tunnel-host'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 隧道端口
+    const tunnelPort = document.getElementById('tunnelPort');
+    if (tunnelPort) {
+        tunnelPort.addEventListener('input', (e) => {
+            if (e.target.value.trim()) {
+                config['--tunnel-port'] = e.target.value.trim();
+            } else {
+                delete config['--tunnel-port'];
+            }
+            updateCommandPreview();
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 文件传输设置相关的事件监听器
+    
+    // 文件推送目标路径
+    const pushTargetInput = document.getElementById('pushTarget');
+    if (pushTargetInput) {
+        pushTargetInput.addEventListener('input', (e) => {
+            console.log('文件推送目标路径变更:', e.target.value);
+            if (e.target.value) {
+                config['--push-target'] = e.target.value;
+            } else {
+                delete config['--push-target'];
+            }
+            updateCommandPreview();
+        });
+    }
+
+    // 如果还有其他文件传输相关的设置，也可以按照类似的方式添加
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 渲染驱动
+    document.getElementById('renderDriver').addEventListener('input', (e) => {
+        if (e.target.value) {
+            config['--render-driver'] = e.target.value;
+        } else {
+            delete config['--render-driver'];
+        }
+        updateCommandPreview();
+    });
+
+    // 不清理服务端
+    document.getElementById('noCleanup').addEventListener('change', (e) => {
+        if (e.target.checked) {
+            config['--no-cleanup'] = true;
+        } else {
+            delete config['--no-cleanup'];
+        }
+        updateCommandPreview();
+    });
+
+    // 错误时不降低分辨率
+    document.getElementById('noDownsizeOnError').addEventListener('change', (e) => {
+        if (e.target.checked) {
+            config['--no-downsize-on-error'] = true;
+        } else {
+            delete config['--no-downsize-on-error'];
+        }
+        updateCommandPreview();
+    });
+
+    // 禁用mipmap
+    document.getElementById('noMipmaps').addEventListener('change', (e) => {
+        if (e.target.checked) {
+            config['--no-mipmaps'] = true;
+        } else {
+            delete config['--no-mipmaps'];
+        }
+        updateCommandPreview();
+    });
+
+    // 使用原始按键事件
+    document.getElementById('rawKeyEvents').addEventListener('change', (e) => {
+        if (e.target.checked) {
+            config['--raw-key-events'] = true;
+        } else {
+            delete config['--raw-key-events'];
+        }
+        updateCommandPreview();
+    });
+
+    // 要求音频
+    document.getElementById('requireAudio').addEventListener('change', (e) => {
+        if (e.target.checked) {
+            config['--require-audio'] = true;
+        } else {
+            delete config['--require-audio'];
+        }
+        updateCommandPreview();
+    });
+});
 
