@@ -275,10 +275,20 @@
                                                title="选择视频编码格式"></i>
                                         </label>
                                         <select class="form-select" id="videoCodec">
-                                            <option value="">默认（h264）</option>
+                                            <option value="h264">默认（h264）</option>
                                             <option value="h264">H.264</option>
                                             <option value="h265">H.265</option>
                                             <option value="av1">AV1</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 直播场景选择 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">直播场景</label>
+                                        <select class="form-select" id="scene">
+                                            <option value="复杂">复杂</option>
+                                            <option value="普通">普通</option>
+                                            <!-- 可根据需要添加更多选项 -->
                                         </select>
                                     </div>
 

@@ -1393,3 +1393,60 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// 根据分辨率、帧率、编码格式和场景推荐视频比特率
+function recommendVideoBitrate(maxSize, maxFps, codec, scene) {
+    // 假设宽高比为16:9，可根据需要调整
+    const width = maxSize;
+    const height = Math.floor(maxSize * 9 / 16);
+    const resolution = width * height;
+    
+    // 定义编码格式系数，假设 h264 为 1，h265 压缩效率更高，设为 0.7，av1 更高，设为 0.5
+    let codecFactor = 1;
+    if (codec === 'h265') {
+        codecFactor = 0.7;
+    } else if (codec === 'av1') {
+        codecFactor = 0.5;
+    }
+    
+    // 定义场景系数，复杂场景需要更高比特率，如复杂设为 1.5，普通设为 1
+    let sceneFactor = 1;
+    if (scene === '复杂') {
+        sceneFactor = 1.5;
+    } else if (scene === '普通') {
+        sceneFactor = 1;
+    }
+    
+    // 计算比特率，基础系数可根据实际情况调整
+    let bitrate = (resolution * maxFps * 0.07 * codecFactor * sceneFactor) / 1000000; // 单位：Mbps
+    bitrate = Math.round(bitrate);
+    return bitrate;
+}
+
+// 当用户输入最大尺寸、最大帧率、编码格式和场景时，更新推荐的比特率
+document.getElementById('maxSize').addEventListener('input', updateRecommendedBitrate);
+document.getElementById('maxFps').addEventListener('input', updateRecommendedBitrate);
+document.getElementById('videoCodec').addEventListener('change', updateRecommendedBitrate);
+document.getElementById('scene').addEventListener('change', updateRecommendedBitrate);
+
+function updateRecommendedBitrate() {
+    const maxSizeValue = document.getElementById('maxSize').value;
+    const maxFpsValue = document.getElementById('maxFps').value;
+    const codecValue = document.getElementById('videoCodec').value;
+    const sceneValue = document.getElementById('scene').value;
+
+    if (maxSizeValue && maxFpsValue && codecValue && sceneValue) {
+        const maxSize = Number(maxSizeValue);
+        const maxFps = Number(maxFpsValue);
+        const codec = codecValue;
+        const scene = sceneValue;
+
+        const recommendedBitrate = recommendVideoBitrate(maxSize, maxFps, codec, scene);
+
+        // 将推荐的比特率填入视频比特率输入框
+        document.getElementById('videoBitrate').value = recommendedBitrate;
+        // 更新配置
+        config['--video-bit-rate'] = `${recommendedBitrate}M`; // 单位为 Mbps
+        updateCommandPreview();
+    }
+}
