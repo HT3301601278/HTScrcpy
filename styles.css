@@ -196,3 +196,56 @@
 .btn i {
     font-size: 1.1em;
 }
+
+/* 添加到现有的 styles.css 文件中 */
+.input-group {
+    align-items: stretch;
+}
+
+.input-group .form-select {
+    flex: 1;
+    height: 38px; /* 确保与按钮高度一致 */
+}
+
+.input-group .btn {
+    height: 38px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.input-group .btn i {
+    font-size: 16px;
+}
+
+#deviceStatus {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* 添加悬停效果 */
+.input-group .btn:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+/* 添加加载动画样式 */
+.bi-arrow-clockwise.rotating {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.input-group .btn#refreshDevices {
+    transform: translateY(5.5px);
+}

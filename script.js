@@ -35,17 +35,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 获取设备列表的函数
 async function getConnectedDevices() {
+    const refreshButton = document.getElementById('refreshDevices');
+    const refreshIcon = refreshButton.querySelector('.bi-arrow-clockwise');
+    const deviceStatus = document.getElementById('deviceStatus');
+    
     try {
-        console.log('开始获取设备列表');
-        const deviceStatus = document.getElementById('deviceStatus');
-        const deviceList = document.getElementById('deviceList');
+        // 添加加载动画
+        refreshIcon.classList.add('rotating');
+        refreshButton.disabled = true;
+        deviceStatus.textContent = '正在刷新设备列表...';
         
-        if (!deviceStatus || !deviceList) {
-            console.error('找不到必要的DOM元素');
-            return;
-        }
-        
-        deviceStatus.textContent = '正在获取设备列表...';
+        // 模拟获取设备列表的延迟
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
         console.log('发送请求到服务器...');
         const response = await fetch('http://localhost:3000/devices', {
@@ -93,11 +94,12 @@ async function getConnectedDevices() {
         }
     } catch (error) {
         console.error('获取设备列表失败:', error);
-        const deviceStatus = document.getElementById('deviceStatus');
-        if (deviceStatus) {
-            deviceStatus.textContent = `获取设备列表失败: ${error.message}`;
-            deviceStatus.className = 'form-text text-danger';
-        }
+        deviceStatus.textContent = '获取设备列表失败';
+        deviceStatus.style.color = '#dc3545';
+    } finally {
+        // 移除加载动画
+        refreshIcon.classList.remove('rotating');
+        refreshButton.disabled = false;
     }
 }
 
@@ -596,9 +598,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('最大尺寸输入值:', e.target.value);
         
         if (e.target.value) {
-            config['--max-size'] = e.target.value;
+            config['-m'] = e.target.value;
         } else {
-            delete config['--max-size'];
+            delete config['-m'];
         }
         
         console.log('更新后的配置:', config);
@@ -656,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCommandPreview();
     });
 
-    // 添加显示参数设置的事件监听器
+    // 修改显示参数设置的事件监听器
     
     // 最大尺寸
     document.getElementById('maxSize').addEventListener('input', (e) => {
@@ -681,9 +683,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 显示ID
     document.getElementById('displayId').addEventListener('input', (e) => {
         if (e.target.value) {
-            config['--display'] = e.target.value;
+            config['--display-id'] = e.target.value;
         } else {
-            delete config['--display'];
+            delete config['--display-id'];
         }
         updateCommandPreview();
     });
@@ -691,7 +693,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // 屏幕裁剪
     document.getElementById('crop').addEventListener('input', (e) => {
         if (e.target.value) {
-            config['--crop'] = e.target.value;
+            // 检查输入格式是否符合 width:height:x:y
+            const cropPattern = /^\d+:\d+:\d+:\d+$/;
+            if (cropPattern.test(e.target.value)) {
+                config['--crop'] = e.target.value;
+            } else {
+                delete config['--crop'];
+            }
         } else {
             delete config['--crop'];
         }
@@ -752,6 +760,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
+        
+        console.log('生成的命令:', command);
         
         const commandPreview = document.getElementById('commandPreview');
         if (commandPreview) {
