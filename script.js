@@ -568,6 +568,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             delete config['--verbosity'];
         }
+        console.log('日志级别变更:', e.target.value);
+        console.log('当前配置:', config);
         updateCommandPreview();
     });
 
@@ -1374,5 +1376,20 @@ document.addEventListener('DOMContentLoaded', () => {
         gamepadMode.value = 'disabled';
         config['--gamepad'] = 'disabled';
         updateCommandPreview();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const logLevelSelect = document.getElementById('logLevel');
+    if (logLevelSelect) {
+        logLevelSelect.addEventListener('change', function(e) {
+            const logLevel = e.target.value;
+            if (logLevel) {
+                config['--verbosity'] = logLevel;
+            } else {
+                delete config['--verbosity'];
+            }
+            updateCommandPreview();
+        });
     }
 });
