@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrcpy 配置工具</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        .device-selection {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+
+        #deviceList {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        #deviceStatus {
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .refresh-button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Scrcpy 配置工具</a>
+            </div>
+        </nav>
+
+        <div class="row mt-3">
+            <!-- 左侧配置区域 -->
+            <div class="col-md-9">
+                <div class="accordion" id="configAccordion">
+                    <!-- 基础设置 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingBasic">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBasic">
+                                1. 基础设置
+                            </button>
+                        </h2>
+                        <div id="collapseBasic" class="accordion-collapse collapse show" data-bs-parent="#configAccordion">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">已连接设备</label>
+                                            <div class="input-group">
+                                                <select class="form-select" id="deviceList">
+                                                    <option value="">请选择设备...</option>
+                                                </select>
+                                                <button class="btn btn-outline-secondary" type="button" id="refreshDevices">
+                                                    <i class="bi bi-arrow-clockwise"></i> 刷新
+                                                </button>
+                                            </div>
+                                            <div id="deviceStatus" class="form-text"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">设备连接方式</label>
+                                            <select class="form-select" id="deviceConnectionType">
+                                                <option value="">默认</option>
+                                                <option value="--select-usb">USB设备</option>
+                                                <option value="--select-tcpip">TCP/IP设备</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">设备序列号</label>
+                                            <input type="text" class="form-control" id="serialNumber" placeholder="可选">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 显示设置 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingDisplay">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDisplay">
+                                2. 显示设置
+                            </button>
+                        </h2>
+                        <div id="collapseDisplay" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                            <div class="accordion-body">
+                                <!-- 窗口设置 -->
+                                <div class="card mb-3">
+                                    <div class="card-header">窗口设置</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label class="form-label">窗口标题</label>
+                                                    <input type="text" class="form-control" id="windowTitle">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="fullscreen">
+                                                    <label class="form-check-label">全屏模式</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="borderless">
+                                                    <label class="form-check-label">无边框模式</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="alwaysOnTop">
+                                                    <label class="form-check-label">窗口置顶</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 新增显示参数设置卡片 -->
+                                <div class="card mb-3">
+                                    <div class="card-header">显示参数设置</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <!-- 最大尺寸限制 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">最大尺寸
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="限制视频尺寸，例如：1024"></i>
+                                                </label>
+                                                <input type="number" class="form-control" id="maxSize" 
+                                                       placeholder="例如：1024">
+                                            </div>
+
+                                            <!-- 显示缓冲延迟 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">显示缓冲延迟(ms)
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="设置显示缓冲延迟，默认为0"></i>
+                                                </label>
+                                                <input type="number" class="form-control" id="displayBuffer" 
+                                                       placeholder="默认：0">
+                                            </div>
+
+                                            <!-- 显示ID -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">显示ID
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="指定显示设备ID"></i>
+                                                </label>
+                                                <input type="text" class="form-control" id="displayId" 
+                                                       placeholder="例如：0">
+                                            </div>
+
+                                            <!-- 屏幕裁剪 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">屏幕裁剪
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="格式：width:height:x:y"></i>
+                                                </label>
+                                                <input type="text" class="form-control" id="crop" 
+                                                       placeholder="格式：宽:高:x:y，例如：1224:1440:0:0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 在显示设置卡片中添加新的设置项 -->
+                                <div class="card mb-3">
+                                    <div class="card-header">方向设置</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <!-- 显示和录制方向 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">显示和录制方向
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="同时设置显示和录制方向"></i>
+                                                </label>
+                                                <select class="form-select" id="orientation">
+                                                    <option value="">默认（0°）</option>
+                                                    <option value="0">0°</option>
+                                                    <option value="90">90°</option>
+                                                    <option value="180">180°</option>
+                                                    <option value="270">270°</option>
+                                                    <option value="flip0">水平翻转 0°</option>
+                                                    <option value="flip90">水平翻转 90°</option>
+                                                    <option value="flip180">水平翻转 180°</option>
+                                                    <option value="flip270">水平翻转 270°</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- 锁定视频方向 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">锁定视频方向
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="锁定捕获的视频方向"></i>
+                                                </label>
+                                                <select class="form-select" id="lockVideoOrientation">
+                                                    <option value="">默认（不锁定）</option>
+                                                    <option value="unlocked">不锁定</option>
+                                                    <option value="initial">初始方向</option>
+                                                    <option value="0">0°</option>
+                                                    <option value="90">90°</option>
+                                                    <option value="180">180°</option>
+                                                    <option value="270">270°</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 视频设置 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingVideo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVideo">
+                                3. 视频设置
+                            </button>
+                        </h2>
+                        <div id="collapseVideo" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <!-- 视频源选择 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">视频源
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="选择视频源（显示屏或摄像头）"></i>
+                                        </label>
+                                        <select class="form-select" id="videoSource">
+                                            <option value="">默认（显示屏）</option>
+                                            <option value="display">显示屏</option>
+                                            <option value="camera">摄像头</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 视频编码器 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">视频编码
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="选择视频编码格式"></i>
+                                        </label>
+                                        <select class="form-select" id="videoCodec">
+                                            <option value="">默认（h264）</option>
+                                            <option value="h264">H.264</option>
+                                            <option value="h265">H.265</option>
+                                            <option value="av1">AV1</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 比特率设置 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">视频比特率
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="设置视频比特率，默认8M"></i>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="videoBitrate" placeholder="8">
+                                            <select class="form-select" id="videoBitrateUnit" style="max-width: 80px;">
+                                                <option value="M">M</option>
+                                                <option value="K">K</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- 最大帧率 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">最大帧率
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="限制最大帧率"></i>
+                                        </label>
+                                        <input type="number" class="form-control" id="maxFps" placeholder="默认不限制">
+                                    </div>
+
+                                    <!-- 编码器高级选项 -->
+                                    <div class="col-12 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="showAdvancedVideo">
+                                            <label class="form-check-label">显示高级选项</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mb-3 advanced-video-options" style="display: none;">
+                                        <label class="form-label">编码器选项
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="设置视频编码器的高级选项"></i>
+                                        </label>
+                                        <input type="text" class="form-control" id="videoCodecOptions" 
+                                               placeholder="格式：key:type=value,key:type=value">
+                                    </div>
+                                </div>
+
+                                <!-- 新增摄像头设置卡片 -->
+                                <div class="card mb-3" id="cameraSettings">
+                                    <div class="card-header">摄像头设置</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <!-- 摄像头ID -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">摄像头ID
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="指定要使用的摄像头ID"></i>
+                                                </label>
+                                                <input type="text" class="form-control" id="cameraId" 
+                                                       placeholder="例如：0">
+                                            </div>
+
+                                            <!-- 摄像头方向 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">摄像头方向
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="选择摄像头朝向"></i>
+                                                </label>
+                                                <select class="form-select" id="cameraFacing">
+                                                    <option value="">默认</option>
+                                                    <option value="front">前置</option>
+                                                    <option value="back">后置</option>
+                                                    <option value="external">外置</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- 摄像头分辨率 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">摄像头分辨率
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="格式：宽x高，例如：1280x720"></i>
+                                                </label>
+                                                <input type="text" class="form-control" id="cameraSize" 
+                                                       placeholder="格式：宽x高，例如：1280x720">
+                                            </div>
+
+                                            <!-- 摄像头宽高比 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">摄像头宽高比
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="设置摄像头画面宽高比"></i>
+                                                </label>
+                                                <input type="text" class="form-control" id="cameraAr" 
+                                                       placeholder="例如：16:9">
+                                            </div>
+
+                                            <!-- 摄像头帧率 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">摄像头帧率
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="设置摄像头帧率"></i>
+                                                </label>
+                                                <input type="number" class="form-control" id="cameraFps" 
+                                                       placeholder="例如：30">
+                                            </div>
+
+                                            <!-- 高速摄像头模式 -->
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="cameraHighSpeed">
+                                                    <label class="form-check-label">高速摄像头模式
+                                                        <i class="bi bi-question-circle tooltip-icon" 
+                                                           data-bs-toggle="tooltip" 
+                                                           title="启用高速摄像头模式，可能支持更高帧率"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 音频设置 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingAudio">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAudio">
+                                4. 音频设置
+                            </button>
+                        </h2>
+                        <div id="collapseAudio" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                            <div class="accordion-body">
+                                <!-- 音频开关 -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="audioEnabled" checked>
+                                            <label class="form-check-label">启用音频</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="audioPlayback" checked>
+                                            <label class="form-check-label">启用音频播放</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 音频基础设置 -->
+                                <div class="row" id="audioSettings">
+                                    <!-- 音频源选择 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">音频源
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="output: 全部音频输出&#13;mic: 麦克风&#13;playback: 应用播放"></i>
+                                        </label>
+                                        <select class="form-select" id="audioSource">
+                                            <option value="">默认（output）</option>
+                                            <option value="output">输出</option>
+                                            <option value="mic">麦克风</option>
+                                            <option value="playback">应用播放</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 音频编码器 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">音频编码
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="选择音频编码格式"></i>
+                                        </label>
+                                        <select class="form-select" id="audioCodec">
+                                            <option value="">默认（opus）</option>
+                                            <option value="opus">Opus</option>
+                                            <option value="aac">AAC</option>
+                                            <option value="flac">FLAC</option>
+                                            <option value="raw">Raw</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 音频比特率 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">音频比特率
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="设置音频比特率，默认128K"></i>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="audioBitrate" placeholder="128">
+                                            <select class="form-select" id="audioBitrateUnit" style="max-width: 80px;">
+                                                <option value="K">K</option>
+                                                <option value="M">M</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- 缓冲设置 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">音频缓冲（毫秒）
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="设置音频缓冲时间，默认50ms"></i>
+                                        </label>
+                                        <input type="number" class="form-control" id="audioBuffer" placeholder="50">
+                                    </div>
+
+                                    <!-- 输出缓冲 -->
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">输出缓冲（毫秒）
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="设置音频输出缓冲时间，默认5ms"></i>
+                                        </label>
+                                        <input type="number" class="form-control" id="audioOutputBuffer" placeholder="5">
+                                    </div>
+
+                                    <!-- 高级选项 -->
+                                    <div class="col-12 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="showAdvancedAudio">
+                                            <label class="form-check-label">显示高级选项</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mb-3 advanced-audio-options" style="display: none;">
+                                        <label class="form-label">编码器选项
+                                            <i class="bi bi-question-circle tooltip-icon" 
+                                               data-bs-toggle="tooltip" 
+                                               title="设置音频编码器的高级选项"></i>
+                                        </label>
+                                        <input type="text" class="form-control" id="audioCodecOptions" 
+                                               placeholder="格式：key:type=value,key:type=value">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 控制设置 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingControl">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseControl">
+                                5. 控制设置
+                            </button>
+                        </h2>
+                        <div id="collapseControl" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                            <div class="accordion-body">
+                                <!-- 5.1 输入设置 -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">输入设置</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- 键盘模式 -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">键盘模式
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="disabled: 禁用键盘&#13;sdk: 使用Android系统API&#13;uhid: 模拟物理键盘&#13;aoa: 使用AOAv2协议"></i>
+                                                </label>
+                                                <select class="form-select" id="keyboardMode">
+                                                    <option value="">默认</option>
+                                                    <option value="disabled">禁用</option>
+                                                    <option value="sdk">SDK</option>
+                                                    <option value="uhid">UHID</option>
+                                                    <option value="aoa">AOA</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- 鼠标模式 -->
+                                            <div class="col-md-6">
+                                                <label class="form-label">鼠标模式
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="disabled: 禁用鼠标&#13;sdk: 使用Android系统API&#13;uhid: 模拟物理鼠标&#13;aoa: 使用AOAv2协议"></i>
+                                                </label>
+                                                <select class="form-select" id="mouseMode">
+                                                    <option value="">默认</option>
+                                                    <option value="disabled">禁用</option>
+                                                    <option value="sdk">SDK</option>
+                                                    <option value="uhid">UHID</option>
+                                                    <option value="aoa">AOA</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- 游戏手柄模式 -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">游戏手柄模式
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="disabled: 禁用游戏手柄&#13;uhid: 模拟物理游戏手柄&#13;aoa: 使用AOAv2协议"></i>
+                                                </label>
+                                                <select class="form-select" id="gamepadMode">
+                                                    <option value="">默认</option>
+                                                    <option value="disabled">禁用</option>
+                                                    <option value="uhid">UHID</option>
+                                                    <option value="aoa">AOA</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- 鼠标按键绑定 -->
+                                            <div class="col-md-6">
+                                                <label class="form-label">鼠标按键绑定
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="配置鼠标按键绑定，格式：xxxx:xxxx"></i>
+                                                </label>
+                                                <input type="text" class="form-control" id="mouseBinding" 
+                                                       placeholder="例如：bhsn:++++">
+                                            </div>
+                                        </div>
+
+                                        <!-- 其他输入选项 -->
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="noKeyRepeat">
+                                                    <label class="form-check-label">禁用按键重复</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="noMouseHover">
+                                                    <label class="form-check-label">禁用鼠标悬停</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="preferText">
+                                                    <label class="form-check-label">优先文本输入</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 5.2 剪贴板设置 -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">剪贴板设置</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="noClipboardAutosync">
+                                                    <label class="form-check-label">禁用剪贴板自动同步</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="legacyPaste">
+                                                    <label class="form-check-label">使用传统粘贴模式</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 录制设置 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingRecord">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecord">
+                                6. 录制设置
+                            </button>
+                        </h2>
+                        <div id="collapseRecord" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                            <div class="accordion-body">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <!-- 录制开关和文件路径 -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <div class="form-check form-switch mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="enableRecord">
+                                                    <label class="form-check-label">启用录制</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12" id="recordSettings" style="display: none;">
+                                                <div class="input-group">
+                                                    <span class="input-group-text">保存路径</span>
+                                                    <input type="text" class="form-control" id="recordPath" 
+                                                           placeholder="例如：/path/to/video.mp4">
+                                                    <button class="btn btn-outline-secondary" type="button" id="selectFile">
+                                                        <i class="bi bi-folder2-open"></i> 选择
+                                                    </button>
+                                                </div>
+                                                <small class="text-muted">录制格式将根据文件扩展名自动确定</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- 录制格式和方向 -->
+                                        <div class="row" id="recordAdvancedSettings" style="display: none;">
+                                            <!-- 录制格式 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">录制格式
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="强制指定录制格式，默认根据文件扩展名确定"></i>
+                                                </label>
+                                                <select class="form-select" id="recordFormat">
+                                                    <option value="">自动（根据扩展名）</option>
+                                                    <option value="mp4">MP4</option>
+                                                    <option value="mkv">MKV</option>
+                                                    <option value="m4a">M4A（仅音频）</option>
+                                                    <option value="mka">MKA（仅音频）</option>
+                                                    <option value="opus">OPUS（仅音频）</option>
+                                                    <option value="aac">AAC（仅音频）</option>
+                                                    <option value="flac">FLAC（仅音频）</option>
+                                                    <option value="wav">WAV（仅音频）</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- 录制方向 -->
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">录制方向
+                                                    <i class="bi bi-question-circle tooltip-icon" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="设置录制视频的方向"></i>
+                                                </label>
+                                                <select class="form-select" id="recordOrientation">
+                                                    <option value="">默认（0°）</option>
+                                                    <option value="0">0°</option>
+                                                    <option value="90">90°</option>
+                                                    <option value="180">180°</option>
+                                                    <option value="270">270°</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 其他设置 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOther">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOther">
+                                7. 其他设置
+                            </button>
+                        </h2>
+                        <div id="collapseOther" class="accordion-collapse collapse" data-bs-parent="#configAccordion">
+                            <!-- 7.1 设备控制 -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">设备控制</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="stayAwake">
+                                                <label class="form-check-label">保持设备唤醒</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="showTouches">
+                                                <label class="form-check-label">显示触摸点</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="turnScreenOff">
+                                                <label class="form-check-label">关闭设备屏幕</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="disableScreensaver">
+                                                <label class="form-check-label">禁用屏幕保护</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="noPowerOn">
+                                                <label class="form-check-label">启动时不点亮屏幕</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="powerOffOnClose">
+                                                <label class="form-check-label">关闭时关闭屏幕</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7.2 连接设置 -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">连接设置</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="forceAdbForward">
+                                                <label class="form-check-label">强制使用adb forward</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="killAdbOnClose">
+                                                <label class="form-check-label">关闭时结束adb</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 隧道设置 -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">隧道主机</label>
+                                            <input type="text" class="form-control" id="tunnelHost" placeholder="例如：localhost">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">隧道端口</label>
+                                            <input type="number" class="form-control" id="tunnelPort" placeholder="例如：5037">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7.3 文件传输设置 -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">文件传输设置</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <label class="form-label">文件推送目标路径
+                                                <i class="bi bi-question-circle tooltip-icon" 
+                                                   data-bs-toggle="tooltip" 
+                                                   title="设置文件推送的目标路径"></i>
+                                            </label>
+                                            <input type="text" class="form-control" id="pushTarget" 
+                                                   placeholder="例如：/sdcard">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7.4 高级设置 -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">高级设置</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <!-- 原有选项 -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">日志级别</label>
+                                            <select class="form-select" id="verbosity">
+                                                <option value="">默认（info）</option>
+                                                <option value="verbose">详细</option>
+                                                <option value="debug">调试</option>
+                                                <option value="info">信息</option>
+                                                <option value="warn">警告</option>
+                                                <option value="error">错误</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- 新增选项 -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">渲染驱动
+                                                <i class="bi bi-question-circle tooltip-icon" 
+                                                   data-bs-toggle="tooltip" 
+                                                   title="指定SDL渲染驱动"></i>
+                                            </label>
+                                            <input type="text" class="form-control" id="renderDriver" 
+                                                   placeholder="例如：direct3d">
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="noCleanup">
+                                                <label class="form-check-label">不清理服务端</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="noDownsizeOnError">
+                                                <label class="form-check-label">错误时不降低分辨率</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="noMipmaps">
+                                                <label class="form-check-label">禁用mipmap</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="rawKeyEvents">
+                                                <label class="form-check-label">使用原始按键事件</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="requireAudio">
+                                                <label class="form-check-label">要求音频可用</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- V4L2设置（仅Linux） -->
+                                        <div class="col-12">
+                                            <div class="card mb-3">
+                                                <div class="card-header">V4L2设置（仅Linux）</div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">V4L2输出设备</label>
+                                                            <input type="text" class="form-control" id="v4l2Sink" 
+                                                                   placeholder="例如：/dev/video0">
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">V4L2缓冲大小</label>
+                                                            <input type="number" class="form-control" id="v4l2Buffer" 
+                                                                   placeholder="例如：1">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 右侧区域 -->
+            <div class="col-md-3">
+                <div class="sticky-top" style="top: 20px;">
+                    <!-- 命令预览卡片 -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            命令预览
+                            <button class="btn btn-sm btn-primary float-end" onclick="copyCommand()">
+                                <i class="bi bi-clipboard"></i> 复制
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <pre id="commandPreview" class="command-preview">scrcpy</pre>
+                        </div>
+                    </div>
+                    
+                    <!-- 预设管理卡片 -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>预设管理</span>
+                            <div>
+                                <button class="btn btn-success" id="importPresetBtn">
+                                    <i class="bi bi-download"></i> 导入
+                                </button>
+                                <button class="btn btn-info" id="exportPresetBtn">
+                                    <i class="bi bi-upload"></i> 导出
+                                </button>
+                                <button class="btn btn-primary" id="savePresetBtn">
+                                    <i class="bi bi-save"></i> 保存
+                                </button>
+                                <button class="btn btn-danger" id="clearPresetBtn">
+                                    <i class="bi bi-trash"></i> 清除
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- 预设分类选择 -->
+                            <div class="mb-3">
+                                <select class="form-select" id="presetCategory">
+                                    <option value="all">全部预设</option>
+                                    <option value="display">显示设置</option>
+                                    <option value="video">视频设置</option>
+                                    <option value="audio">音频设置</option>
+                                    <option value="control">控制设置</option>
+                                    <option value="record">录制设置</option>
+                                    <option value="other">其他设置</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 预设搜索 -->
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="presetSearch" 
+                                       placeholder="搜索预设...">
+                                <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+
+                            <!-- 预设列表 -->
+                            <div id="presetList" class="preset-list" style="max-height: 300px; overflow-y: auto;">
+                                <!-- 预设列表将在这里动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 在 body 标签结束前添加模态框 -->
+    <!-- 添加预设保存模态框 -->
+    <div class="modal fade" id="savePresetModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">保存预设</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">预设名称 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="presetName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">预设分类</label>
+                        <select class="form-select" id="presetCategorySelect">
+                            <option value="display">显示设置</option>
+                            <option value="video">视频设置</option>
+                            <option value="audio">音频设置</option>
+                            <option value="control">控制设置</option>
+                            <option value="record">录制设置</option>
+                            <option value="other">其他设置</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">预设描述</label>
+                        <textarea class="form-control" id="presetDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="savePresetConfirm">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 在 body 结束标签前添加 Toast 组件 -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1050;">
+        <div id="copyToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    命令已复制到剪贴板！
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

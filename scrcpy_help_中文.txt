@@ -1,0 +1,530 @@
+ scrcpy 2.7 <https://github.com/Genymobile/scrcpy>
+ 用法: scrcpy [选项]
+ 
+ 选项:
+ 
+     --always-on-top
+         使 scrcpy 窗口始终位于其他窗口之上。
+ 
+     --audio-bit-rate=值
+         以给定的比特率（以比特/秒表示）编码音频。支持单位后缀：“K”（x1000）和“M”（x1000000）。
+         默认值为 128K（128000）。
+ 
+     --audio-buffer=毫秒
+         配置音频缓冲延迟（以毫秒为单位）。
+         较低的值会减少延迟，但会增加缓冲区下溢（导致音频故障）的可能性。
+         默认值为 50。
+ 
+     --audio-codec=名称
+         选择音频编码器（opus, aac, flac 或 raw）。
+         默认值为 opus。
+ 
+     --audio-codec-options=键[:类型]=值[,...]
+         为设备音频编码器设置以逗号分隔的键:类型=值选项列表。
+         '类型' 的可能值为 'int'（默认）、'long'、'float' 和 'string'。
+         可用编码器选项列表请参阅 Android 文档：
+         <https://d.android.com/reference/android/media/MediaFormat>
+ 
+     --audio-dup
+         复制音频（捕获并保持设备上的播放）。
+         此功能仅在 --audio-source=playback 时可用。
+ 
+     --audio-encoder=名称
+         使用特定的 MediaCodec 音频编码器（取决于 --audio-codec 提供的编码器）。
+         可用的编码器可以通过 --list-encoders 列出。
+ 
+     --audio-source=源
+         选择音频源（输出、麦克风或播放）。
+         “输出”源转发整个音频输出，并禁用设备上的播放。
+         “播放”源捕获音频播放（Android 应用可能选择退出，因此不一定捕获整个输出）。
+         “麦克风”源捕获麦克风。
+         默认值为 output。
+ 
+     --audio-output-buffer=毫秒
+         配置 SDL 音频输出缓冲区的大小（以毫秒为单位）。
+         如果您遇到“机械”音频播放，您应该尝试更高的值（10）。否则，请勿更改此设置。
+         默认值为 5。
+ 
+     -b, --video-bit-rate=值
+         以给定的比特率（以比特/秒表示）编码视频。支持单位后缀：“K”（x1000）和“M”（x1000000）。
+         默认值为 8M（8000000）。
+ 
+     --camera-ar=ar
+         通过其宽高比（+/- 10%）选择摄像头大小。
+         可能的值为 "sensor"（使用摄像头传感器的宽高比）、"<数字>:<分母>"（例如 "4:3"）或 "<值>"（例如 "1.6"）。
+ 
+     --camera-id=id
+         指定要镜像的设备摄像头 ID。
+         可用的摄像头 ID 可以通过以下命令列出：
+             scrcpy --list-cameras
+ 
+     --camera-facing=方向
+         按其朝向方向选择设备摄像头。
+         可能的值为 "front"（前置）、"back"（后置）和 "external"（外置）。
+ 
+     --camera-high-speed
+         启用高速摄像头捕捉模式。
+         此模式限于特定的分辨率和帧率，可通过 --list-camera-sizes 列出。
+ 
+     --camera-size=<宽度>x<高度>
+         指定明确的摄像头捕捉大小。
+ 
+     --camera-fps=值
+         指定摄像头捕捉的帧率。
+         如果未指定，将使用 Android 的默认帧率（30 fps）。
+ 
+     --crop=宽度:高度:x:y
+         在服务器端裁剪设备屏幕。
+         值以设备的自然方向表达（通常为手机的纵向，平板的横向）。任何 --max-size 值都将在裁剪后的大小上计算。
+ 
+     -d, --select-usb
+         使用 USB 设备（如果只有一个，例如 adb -d）。
+         另请参阅 -e (--select-tcpip)。
+ 
+     --disable-screensaver
+         禁用 scrcpy 运行时的屏幕保护程序。
+ 
+     --display-buffer=毫秒
+         添加缓冲延迟（以毫秒为单位）后再显示。此值增加延迟以补偿抖动。
+         默认值为 0（无缓冲）。
+ 
+     --display-id=id
+         指定要镜像的设备显示 ID。
+         可用的显示 ID 可以通过以下命令列出：
+             scrcpy --list-displays
+         默认值为 0。
+ 
+     --display-orientation=值
+         设置初始显示方向。
+         可能的值为 0、90、180、270、flip0、flip90、flip180 和 flip270。
+         数字代表顺时针旋转的度数；"flip" 关键字在旋转前应用水平翻转。
+         默认值为 0。
+ 
+     -e, --select-tcpip
+         使用 TCP/IP 设备（如果只有一个，例如 adb -e）。
+         另请参阅 -d (--select-usb)。
+ 
+     -f, --fullscreen
+         全屏启动。
+ 
+     --force-adb-forward
+         不尝试使用 "adb reverse" 连接到设备。
+ 
+     -G
+         同 --gamepad=uhid，或如果设置了 --otg 则为 --gamepad=aoa。
+ 
+     --gamepad=模式
+         选择如何将游戏手柄输入发送到设备。
+         可能的值为 "disabled"（禁用）、"uhid" 和 "aoa"。
+         "disabled" 不发送游戏手柄输入到设备。
+         "uhid" 使用设备上的 Linux UHID 内核模块模拟物理 HID 游戏手柄。
+         "aoa" 使用 AOAv2 协议模拟物理游戏手柄。这可能仅在 USB 上有效。
+         另请参阅 --keyboard 和 --mouse。
+ 
+     -h, --help
+         打印此帮助信息。
+ 
+     -K
+         同 --keyboard=uhid，或者如果设置了 --otg 则为 --keyboard=aoa。
+ 
+     --keyboard=模式
+         选择如何将键盘输入发送到设备。
+         可能的值为 "disabled"（禁用）、"sdk"、"uhid" 和 "aoa"。
+         "disabled" 不发送键盘输入到设备。
+         "sdk" 使用 Android 系统 API 将键盘事件传递给应用程序。
+         "uhid" 使用设备上的 Linux UHID 内核模块模拟物理 HID 键盘。
+         "aoa" 使用 AOAv2 协议模拟物理键盘。这可能仅在 USB 上有效。
+         对于 "uhid" 和 "aoa"，需要在设备上配置键盘布局（一次性），通过设置 -> 系统 -> 语言和输入 -> 物理键盘。此设置页面可以直接使用快捷键 MOD+k（除非在 OTG 模式下）或通过执行以下命令启动：
+         `adb shell am start -a android.settings.HARD_KEYBOARD_SETTINGS`。
+         此选项仅在启用 HID 键盘（或连接物理键盘）时可用。
+         另请参阅 --mouse 和 --gamepad。
+ 
+     --kill-adb-on-close
+         在 scrcpy 终止时终止 adb。
+ 
+     --legacy-paste
+         将计算机剪贴板文本作为 Ctrl+v 的键事件序列注入（类似于 MOD+Shift+v）。
+         这是一些设备在程序化设置设备剪贴板时未按预期工作的替代方案。
+ 
+     --list-cameras
+         列出设备摄像头。
+ 
+     --list-camera-sizes
+         列出有效的摄像头捕捉大小。
+ 
+     --list-displays
+         列出设备显示。
+ 
+     --list-encoders
+         列出设备上可用的视频和音频编码器。
+ 
+     --lock-video-orientation[=值]
+         锁定捕捉视频方向到指定值。
+         可能的值为 "unlocked"（解锁）、"initial"（锁定到初始方向）、0、90、180 和 270。值表示从设备自然方向顺时针旋转的度数。
+         默认值为 "unlocked"。
+         未传递参数时，相当于传递 "initial"。
+ 
+     -m, --max-size=值
+         限制视频的宽度和高度到指定值。另一个维度将计算以保持设备的宽高比。
+         默认值为 0（不限制）。
+ 
+     -M
+         同 --mouse=uhid，或如果设置了 --otg 则为 --mouse=aoa。
+ 
+     --max-fps=值
+         限制屏幕捕捉的帧率（自 Android 10 起官方支持，但可能在早期版本上工作）。
+ 
+     --mouse=模式
+         选择如何将鼠标输入发送到设备。
+         可能的值为 "disabled"（禁用）、"sdk"、"uhid" 和 "aoa"。
+         "disabled" 不发送鼠标输入到设备。
+         "sdk" 使用 Android 系统 API 将鼠标事件传递给应用程序。
+         "uhid" 使用设备上的 Linux UHID 内核模块模拟物理 HID 鼠标。
+         "aoa" 使用 AOAv2 协议模拟物理鼠标。这可能仅在 USB 上有效。
+         在 "uhid" 和 "aoa" 模式下，计算机鼠标被捕获以直接控制设备（相对鼠标模式）。
+         LAlt、LSuper 或 RSuper 切换捕获模式，将鼠标控制权返回给计算机。
+         另请参阅 --keyboard 和 --gamepad。
+ 
+     --mouse-bind=xxxx[:xxxx]
+         配置二次点击的绑定。
+         参数必须是一个或两个序列（用 ':' 分隔），每个序列由恰好 4 个字符组成，分别对应二次点击（按顺序为右键、中键、第四次点击和第五次点击）。
+         第一个序列定义主绑定，当鼠标按钮单独按下时使用。第二个序列定义次绑定，当鼠标按钮按下时同时按下 Shift 键时使用。
+         如果省略第二个绑定序列，则与第一个绑定序列相同。
+         每个字符必须是以下之一：
+          '+': 将点击转发到设备
+          '-': 忽略点击
+          'b': 触发快捷键 BACK（或在关闭时打开屏幕）
+          'h': 触发快捷键 HOME
+          's': 触发快捷键 APP_SWITCH
+          'n': 触发快捷键“展开通知面板”
+         默认值为 SDK 鼠标的 'bhsn:++++'，AOA 和 UHID 的 '++++:bhsn'。
+ 
+     -n, --no-control
+         禁用设备控制（以只读方式镜像设备）。
+ 
+     -N, --no-playback
+         禁用计算机上的视频和音频播放（等同于 --no-video-playback --no-audio-playback）。
+ 
+     --no-audio
+         禁用音频转发。
+ 
+     --no-audio-playback
+         禁用计算机上的音频播放。
+ 
+     --no-cleanup
+         默认情况下，scrcpy 在退出时会从设备中删除服务器二进制文件并恢复设备状态（显示触摸、保持唤醒和电源模式）。
+         此选项禁用此清理操作。
+ 
+     --no-clipboard-autosync
+         默认情况下，scrcpy 会在注入 Ctrl+v 之前自动将计算机剪贴板同步到设备剪贴板，并在设备剪贴板更改时同步到计算机剪贴板。
+         此选项禁用此自动同步。
+ 
+     --no-downsize-on-error
+         默认情况下，在 MediaCodec 错误时，scrcpy 会自动尝试使用较低的分辨率重新启动。
+         此选项禁用此行为。
+ 
+     --no-key-repeat
+         当按住键时，不转发重复的键事件。
+ 
+     --no-mipmaps
+         如果渲染器是 OpenGL 3.0+ 或 OpenGL ES 2.0+，则会自动生成 mipmaps 以提高下采样质量。此选项禁用 mipmaps 的生成。
+ 
+     --no-mouse-hover
+         不转发鼠标悬停（无点击的鼠标移动）事件。
+ 
+     --no-power-on
+         启动时不点亮设备屏幕。
+ 
+     --no-video
+         禁用视频转发。
+ 
+     --no-video-playback
+         禁用计算机上的视频播放。
+ 
+     --no-window
+         禁用 scrcpy 窗口。意味着启用 --no-video-playback 和 --no-control。
+ 
+     --orientation=值
+         同 --display-orientation=值 和 --record-orientation=值。
+ 
+     --otg
+         以 OTG 模式运行：模拟物理键盘和鼠标，就像通过 OTG 电缆将计算机键盘和鼠标直接插入设备一样。
+         在此模式下，不需要 adb（USB 调试），并且镜像被禁用。
+         LAlt、LSuper 或 RSuper 切换鼠标捕获模式，将鼠标控制权返回给计算机。
+         可以使用 --keyboard=disabled 和 --mouse=disabled 单独禁用键盘和鼠标。
+         仅在 USB 上有效。
+         请参阅 --keyboard、--mouse 和 --gamepad。
+ 
+     -p, --port=端口[:端口]
+         设置客户端用于监听的 TCP 端口（范围）。
+         默认值为 27183:27199。
+ 
+     --pause-on-exit[=模式]
+         配置退出时暂停。可能的值为 "true"（始终在退出时暂停）、"false"（从不在退出时暂停）和 "if-error"（仅在发生错误时暂停）。
+         这对于防止终端窗口自动关闭，以便可以读取错误消息非常有用。
+         默认值为 "false"。
+         未传递参数时，相当于传递 "true"。
+ 
+     --power-off-on-close
+         关闭 scrcpy 时关闭设备屏幕。
+ 
+     --prefer-text
+         将字母字符和空格作为文本事件而不是键事件注入。
+         这可以避免在输入特殊字符时组合多个键的问题，但会破坏游戏中字母键的预期行为（通常是 WASD）。
+ 
+     --print-fps
+         启动 FPS 计数器，将帧率日志打印到控制台。可以随时使用 MOD+i 启动或停止。
+ 
+     --push-target=路径
+         设置通过拖放将文件推送到设备的目标目录。
+         它被原样传递给 "adb push"。
+         默认值为 "/sdcard/Download/"。
+ 
+     -r, --record=文件.mp4
+         将屏幕录制到文件。
+         格式由 --record-format 选项（如果设置）或文件扩展名决定。
+ 
+     --raw-key-events
+         为所有输入键注入键事件，并忽略文本事件。
+ 
+     --record-format=格式
+         强制录制格式（mp4, mkv, m4a, mka, opus, aac, flac 或 wav）。
+ 
+     --record-orientation=值
+         设置录制方向。
+         可能的值为 0、90、180 和 270。数字表示顺时针旋转的度数。
+         默认值为 0。
+ 
+     --render-driver=名称
+         请求 SDL 使用给定的渲染驱动程序（这只是一个提示）。
+         当前支持的名称为 "direct3d"、"opengl"、"opengles2"、
+         "opengles"、"metal" 和 "software"。
+         <https://wiki.libsdl.org/SDL_HINT_RENDER_DRIVER>
+ 
+     --require-audio
+         默认情况下，当设备上的音频捕获失败时，scrcpy 仅镜像视频。此选项使 scrcpy 在启用音频但不工作时失败。
+ 
+     -s, --serial=序列号
+         设备序列号。仅当连接到 adb 的设备数量超过一个时为必需。
+ 
+     -S, --turn-screen-off
+         立即关闭设备屏幕。
+ 
+     --shortcut-mod=键[+...][,...]
+         指定用于 scrcpy 快捷键的修饰键。
+         可能的键为 "lctrl"（左控制键）、"rctrl"（右控制键）、"lalt"（左Alt）、"ralt"（右Alt）、"lsuper"（左超级键）和 "rsuper"（右超级键）。
+         可以指定多个快捷键修饰键，用 ',' 分隔。
+         例如，要使用 LCtrl 或 LSuper 作为 scrcpy 快捷键的修饰键，请传递 "lctrl,lsuper"。
+         默认值为 "lalt,lsuper"（左Alt或左Super）。
+ 
+     -t, --show-touches
+         启动时启用“显示触摸”，退出时恢复初始值。
+         仅显示物理触摸（不显示 scrcpy 的点击）。
+ 
+     --tcpip[=ip[:端口]]
+         配置并通过 TCP/IP 重新连接设备。
+         如果提供目标地址，则 scrcpy 会在启动前连接到此地址。设备必须在给定的 TCP 端口（默认值为 5555）上监听。
+         如果未提供目标地址，则 scrcpy 会尝试找到当前设备的 IP 地址（通常通过 USB 连接），启用 TCP/IP 模式，然后在启动前连接到此地址。
+ 
+     --time-limit=秒数
+         设置最大镜像时间，单位为秒。
+ 
+     --tunnel-host=IP
+         设置 adb 隧道的 IP 地址以连接到 scrcpy 服务器。此选项会自动启用 --force-adb-forward。
+         默认值为 localhost。
+ 
+     --tunnel-port=端口
+         设置 adb 隧道的 TCP 端口以连接到 scrcpy 服务器。此选项会自动启用 --force-adb-forward。
+         默认值为 0（不强制）：用于建立隧道的本地端口将被使用。
+ 
+     -v, --version
+         打印 scrcpy 的版本。
+ 
+     -V, --verbosity=值
+         设置日志级别（verbose, debug, info, warn 或 error）。
+         默认值为 info。
+ 
+     --v4l2-sink=/dev/videoN
+         输出到 v4l2loopback 设备。
+         这需要锁定视频方向（参见 --lock-video-orientation）。
+         此功能仅在 Linux 上可用。
+ 
+     --v4l2-buffer=毫秒
+         在推送帧之前添加缓冲延迟（以毫秒为单位）。这增加了延迟以补偿抖动。
+         此选项类似于 --display-buffer，但特定于 V4L2 sink。
+         默认值为 0（无缓冲）。
+         此选项仅在 Linux 上可用。
+ 
+     --video-codec=名称
+         选择视频编码器（h264, h265 或 av1）。
+         默认值为 h264。
+ 
+     --video-codec-options=键[:类型]=值[,...]
+         为设备视频编码器设置以逗号分隔的键:类型=值选项列表。
+         '类型' 的可能值为 'int'（默认）、'long'、'float' 和 'string'。
+         可用编码器选项列表请参阅 Android 文档：
+         <https://d.android.com/reference/android/media/MediaFormat>
+ 
+     --video-encoder=名称
+         使用特定的 MediaCodec 视频编码器（取决于 --video-codec 提供的编码器）。
+         可用的编码器可以通过 --list-encoders 列出。
+ 
+     --video-source=源
+         选择视频源（显示或摄像头）。
+         摄像头镜像需要 Android 12+。
+         默认值为 display。
+ 
+     -w, --stay-awake
+         当 scrcpy 运行且设备已插入时，保持设备处于唤醒状态。
+ 
+     --window-borderless
+         禁用窗口装饰（显示无边框窗口）。
+ 
+     --window-title=文本
+         设置自定义窗口标题。
+ 
+     --window-x=值
+         设置初始窗口水平位置。
+         默认值为 "auto"。
+ 
+     --window-y=值
+         设置初始窗口垂直位置。
+         默认值为 "auto"。
+ 
+     --window-width=值
+         设置初始窗口宽度。
+         默认值为 0（自动）。
+ 
+     --window-height=值
+         设置初始窗口高度。
+         默认值为 0（自动）。
+ 
+ Shortcuts:
+ 
+     在以下列表中，MOD 是快捷键修饰键。默认情况下，它是（左）Alt 或（左）Super，但可以通过 --shortcut-mod 配置（见上文）。
+ 
+     MOD+f
+         切换全屏模式
+ 
+     MOD+Left
+         向左旋转显示
+ 
+     MOD+Right
+         向右旋转显示
+ 
+     MOD+Shift+Left
+     MOD+Shift+Right
+         水平翻转显示
+ 
+     MOD+Shift+Up
+     MOD+Shift+Down
+         垂直翻转显示
+ 
+     MOD+z
+         暂停或重新暂停显示
+ 
+     MOD+Shift+z
+         取消暂停显示
+ 
+     MOD+g
+         将窗口大小调整为 1:1（像素完美）
+ 
+     MOD+w
+         ...
+ 
+     双击黑色边框
+         调整窗口大小以去除黑色边框
+ 
+     MOD+h
+     中键点击
+         点击 HOME
+ 
+     MOD+b
+     MOD+Backspace
+     右键点击（当屏幕开启时）
+         点击 BACK
+ 
+     MOD+s
+     第四次点击
+         点击 APP_SWITCH
+ 
+     MOD+m
+         点击 MENU
+ 
+     MOD+Up
+         点击 VOLUME_UP
+ 
+     MOD+Down
+         点击 VOLUME_DOWN
+ 
+     MOD+p
+         点击 POWER（打开/关闭屏幕）
+ 
+     右键点击（当屏幕关闭时）
+         打开屏幕
+ 
+     MOD+o
+         关闭设备屏幕（保持镜像）
+ 
+     MOD+Shift+o
+         打开设备屏幕
+ 
+     MOD+r
+         旋转设备屏幕
+ 
+     MOD+n
+     第五次点击
+         展开通知面板
+ 
+     MOD+Shift+n
+         收起通知面板
+ 
+     MOD+c
+         复制到剪贴板（注入 COPY keycode，Android >= 7 仅可用）
+ 
+     MOD+x
+         剪切到剪贴板（注入 CUT keycode，Android >= 7 仅可用）
+ 
+     MOD+v
+         复制计算机剪贴板到设备，然后粘贴（注入 PASTE keycode，Android >= 7 仅可用）
+ 
+     MOD+Shift+v
+         将计算机剪贴板文本作为键事件序列注入
+ 
+     MOD+k
+         打开设备上的键盘设置（仅限 HID 键盘）
+ 
+     MOD+i
+         启用/禁用 FPS 计数器（在日志中打印每秒帧数）
+ 
+     Ctrl+点击并移动
+         从屏幕中心进行捏合放大和旋转
+ 
+     Shift+点击并移动
+         倾斜（用两根手指垂直滑动）
+ 
+     拖放 APK 文件
+         从计算机安装 APK
+ 
+     拖放非 APK 文件
+         将文件推送到设备（参见 --push-target）
+ 
+ Environment variables:
+ 
+     ADB
+         adb 可执行文件的路径
+ 
+     ANDROID_SERIAL
+         如果未指定选择器（-s, -d, -e 或 --tcpip=<地址>），则使用的设备序列号
+ 
+     SCRCPY_ICON_PATH
+         程序图标的路径
+ 
+     SCRCPY_SERVER_PATH
+         服务器二进制文件的路径
+ 
+ Exit status:
+ 
+       0  正常程序终止
+       1  启动失败
+       2  设备在运行时断开连接
