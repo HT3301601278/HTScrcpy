@@ -7,10 +7,10 @@ const WebSocket = require('ws');
 const app = express();
 const deviceEmitter = new EventEmitter();
 
-// 设置 adb 路径
+// 设置 adb 路径（请根据实际安装路径修改）
 const ADB_PATH = 'D:\\Android\\SDK\\platform-tools\\adb.exe';
 
-// 存储当前设备状态
+// 存储当前连接的设备列表及其状态
 let currentDevices = [];
 
 // 创建 WebSocket 服务器
@@ -25,9 +25,11 @@ app.use(cors({
 }));
 
 // 检测设备的函数
+// 返回一个包含设备信息的数组，每个设备包含id、状态、型号和安卓版本
 function detectDevices() {
     try {
         const stdout = execSync(`"${ADB_PATH}" devices`, { encoding: 'utf8' });
+        // 过滤掉空行和标题行
         const lines = stdout.split('\n')
             .filter(line => line.trim() !== '' && !line.includes('List of devices attached'));
             
@@ -39,16 +41,17 @@ function detectDevices() {
             };
 
             try {
+                // 获取设备的详细信息（型号和安卓版本）
                 device.model = execSync(`"${ADB_PATH}" -s ${device.id} shell getprop ro.product.model`, { encoding: 'utf8' }).trim();
                 device.androidVersion = execSync(`"${ADB_PATH}" -s ${device.id} shell getprop ro.build.version.release`, { encoding: 'utf8' }).trim();
             } catch (error) {
-                console.log(`获取设备 ${device.id} 的详细信息时出错:`, error.message);
+                console.log(`获取设备 ${device.id} 的详细信息失败:`, error.message);
             }
 
             return device;
         });
 
-        // 检查设备状态是否发生变化
+        // 只有当设备列表发生变化时才触发事件
         if (JSON.stringify(devices) !== JSON.stringify(currentDevices)) {
             currentDevices = devices;
             deviceEmitter.emit('devicesChanged', devices);
@@ -56,7 +59,7 @@ function detectDevices() {
 
         return devices;
     } catch (error) {
-        console.error('检测设备出错:', error);
+        console.error('执行 adb devices 命令出错:', error);
         return [];
     }
 }
@@ -66,15 +69,15 @@ setInterval(detectDevices, 500);
 
 // WebSocket 连接处理
 wss.on('connection', (ws) => {
-    console.log('新的 WebSocket 连接建立');
+    console.log('新的 WebSocket 连接已建立');
     
-    // 发送当前设备状态
+    // 向新连接的客户端发送当前设备状态
     ws.send(JSON.stringify({
         type: 'devices',
         data: currentDevices
     }));
 
-    // 监听设备变化
+    // 监听设备变化并实时推送给客户端
     const deviceChangeHandler = (devices) => {
         ws.send(JSON.stringify({
             type: 'devices',
@@ -82,9 +85,7 @@ wss.on('connection', (ws) => {
         }));
     };
 
-    deviceEmitter.on('devicesChanged', deviceChangeHandler);
-
-    // 清理断开的连接
+    // 当连接关闭时移除事件监听器
     ws.on('close', () => {
         deviceEmitter.off('devicesChanged', deviceChangeHandler);
     });

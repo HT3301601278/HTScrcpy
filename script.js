@@ -1,4 +1,4 @@
-// 在文件最开头添加
+// script.js 初始化
 console.log('script.js 开始加载');
 
 // 存储所有配置项的值
@@ -134,7 +134,7 @@ function updateCommandPreview() {
     
     let command = 'scrcpy';
     
-    // 遍历配置对象，构建命令
+    // 遍历配置对象，生成完整的 scrcpy 命令
     for (let key in config) {
         if (config[key] !== null && config[key] !== undefined && config[key] !== '') {
             if (typeof config[key] === 'boolean') {
@@ -580,11 +580,11 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCommandPreview();
     });
 
-    // 文件选择按钮（需要在特定的运行环境中实现）
+    // 文件选择按钮
+    // 注意：此功能需要在特定环境（如 Electron）中实现
+    // TODO: 实现文件选择对话框
     document.getElementById('selectFile').addEventListener('click', () => {
-        // 这里需要根据实际运行环境实现文件选择功能
-        // 如果是在 Electron 等环境中，可以调用系统的文件选择对话框
-        alert('请实现文件选择功能');
+        alert('文件选择功能尚未实现');
     });
 
     // 复制命令
@@ -744,7 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCommandPreview() {
         let command = 'scrcpy';
         
-        // 遍历配置对象，构建命令
+        // 遍历配置对象，生成完整的 scrcpy 命令
         for (let key in config) {
             if (config[key] !== null && config[key] !== undefined && config[key] !== '') {
                 if (typeof config[key] === 'boolean') {
@@ -761,6 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
+        console.log('当前配置:', config);
         console.log('生成的命令:', command);
         
         const commandPreview = document.getElementById('commandPreview');
@@ -918,7 +919,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCommandPreview() {
         let command = 'scrcpy';
         
-        // 遍历配置对象，构建命令
+        // 遍历配置对象，生成完整的 scrcpy 命令
         for (let key in config) {
             if (config[key] !== null && config[key] !== undefined && config[key] !== '') {
                 if (typeof config[key] === 'boolean') {
@@ -1140,7 +1141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 关闭时���闭屏幕
+    // 关闭时关闭屏幕
     const powerOffOnCloseCheckbox = document.getElementById('powerOffOnClose');
     if (powerOffOnCloseCheckbox) {
         powerOffOnCloseCheckbox.addEventListener('change', (e) => {
