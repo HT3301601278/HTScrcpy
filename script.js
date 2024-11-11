@@ -1185,11 +1185,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 隧道主机
+    // 主机
     const tunnelHostInput = document.getElementById('tunnelHost');
     if (tunnelHostInput) {
         tunnelHostInput.addEventListener('input', (e) => {
-            console.log('隧道主机变更:', e.target.value);
+            console.log('主机变更:', e.target.value);
             if (e.target.value) {
                 config['--tunnel-host'] = e.target.value;
             } else {
@@ -1199,11 +1199,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 隧道端口
+    // 端口
     const tunnelPortInput = document.getElementById('tunnelPort');
     if (tunnelPortInput) {
         tunnelPortInput.addEventListener('input', (e) => {
-            console.log('隧道端口变更:', e.target.value);
+            console.log('端口变更:', e.target.value);
             if (e.target.value) {
                 config['--tunnel-port'] = e.target.value;
             } else {
@@ -1243,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 隧道主机
+    // 主机
     const tunnelHost = document.getElementById('tunnelHost');
     if (tunnelHost) {
         tunnelHost.addEventListener('input', (e) => {
@@ -1256,7 +1256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 隧道端口
+    // 端口
     const tunnelPort = document.getElementById('tunnelPort');
     if (tunnelPort) {
         tunnelPort.addEventListener('input', (e) => {

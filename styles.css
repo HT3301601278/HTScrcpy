@@ -242,5 +242,5 @@
 }
 
 .input-group .btn#refreshDevices {
-    transform: translateY(5.5px);
+    transform: translateY(0px);
 }
