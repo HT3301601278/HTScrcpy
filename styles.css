@@ -129,7 +129,6 @@
     margin-bottom: 0;
 }
 
-/* 命令预览相关样式 */
 .command-preview-container {
     position: sticky;
     bottom: 0;
@@ -186,7 +185,6 @@
     display: block;
 }
 
-/* 改进按钮样式 */
 .btn-group .btn {
     display: flex;
     align-items: center;
@@ -197,14 +195,13 @@
     font-size: 1.1em;
 }
 
-/* 添加到现有的 styles.css 文件中 */
 .input-group {
     align-items: stretch;
 }
 
 .input-group .form-select {
     flex: 1;
-    height: 38px; /* 确保与按钮高度一致 */
+    height: 38px;
 }
 
 .input-group .btn {
@@ -226,13 +223,11 @@
     margin-top: 0.25rem;
 }
 
-/* 添加悬停效果 */
 .input-group .btn:hover {
     background-color: #e9ecef;
     border-color: #dee2e6;
 }
 
-/* 添加加载动画样式 */
 .bi-arrow-clockwise.rotating {
     animation: rotate 1s linear infinite;
 }

@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     getConnectedDevices();
 });
 
-// 获设备列表的函数
+// 获取设备列表的函数
 async function getConnectedDevices() {
     const refreshButton = document.getElementById('refreshDevices');
     const refreshIcon = refreshButton.querySelector('.bi-arrow-clockwise');
@@ -103,7 +103,7 @@ async function getConnectedDevices() {
     }
 }
 
-// 设备选择变更事件处理
+// 处理设备选择变更事件
 document.addEventListener('DOMContentLoaded', function() {
     const deviceList = document.getElementById('deviceList');
     if (deviceList) {
@@ -153,7 +153,7 @@ function updateCommandPreview() {
     }
 }
 
-// 复制命令到剪贴板
+// 复制命令到剪贴板并显示提示
 function copyCommand() {
     const command = document.getElementById('commandPreview').textContent;
     navigator.clipboard.writeText(command).then(() => {
@@ -168,7 +168,7 @@ function copyCommand() {
     });
 }
 
-// 运行命令
+// 执行scrcpy命令
 function runCommand() {
     const command = document.getElementById('commandPreview').textContent;
     // 这里需要根据实际运行环境实现命令执行功能
@@ -176,7 +176,7 @@ function runCommand() {
     alert(`即将执行命令：${command}`);
 }
 
-// 为所有输入元素添加事件监听器
+// 为所有配置项输入元素添加事件监听器
 document.addEventListener('DOMContentLoaded', () => {
     // 设备连接方式
     document.getElementById('deviceConnectionType').addEventListener('change', (e) => {
@@ -776,7 +776,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCommandPreview();
 });
 
-// 获取所有相关的表单元素
+// 获取所有scrcpy配置相关的表单元素
 const deviceList = document.getElementById('deviceList');
 const refreshDevicesBtn = document.getElementById('refreshDevices');
 const deviceConnectionType = document.getElementById('deviceConnectionType');
@@ -787,7 +787,7 @@ const alwaysOnTop = document.getElementById('alwaysOnTop');
 
 const commandPreview = document.getElementById('commandPreview');
 
-// 更新命令预览的函数
+// 更新scrcpy命令预览的函数
 function updateCommand() {
     let command = 'scrcpy';
 
@@ -816,7 +816,7 @@ function updateCommand() {
     commandPreview.textContent = command;
 }
 
-// 为所有相关的表单元素添加事件监听器
+// 为所有scrcpy配置相关的表单元素添加事件监听器
 deviceConnectionType.addEventListener('change', updateCommand);
 serialNumber.addEventListener('input', updateCommand);
 alwaysOnTop.addEventListener('change', updateCommand);
@@ -1394,7 +1394,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// 根据分辨率、帧率、编码格式和场景推荐视频比特率
+// 根据设备参数和使用场景计算推荐的视频比特率
 function recommendVideoBitrate(maxSize, maxFps, codec, scene) {
     // 假设宽高比为16:9，可根据需要调整
     const width = maxSize;
