@@ -162,21 +162,20 @@
 }
 
 .preset-item {
-    padding: 10px;
-    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.2s;
+}
+
+.preset-item:hover {
+    background-color: #f8f9fa;
 }
 
 .preset-item:last-child {
-    border-bottom: none;
+    border-bottom: none !important;
 }
 
 .preset-actions {
     display: flex;
     gap: 5px;
-}
-
-.preset-item:hover {
-    background-color: #f8f9fa;
 }
 
 .preset-item .preset-actions {
