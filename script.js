@@ -1350,3 +1350,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// 在 DOMContentLoaded 事件中添加初始化代码
+document.addEventListener('DOMContentLoaded', () => {
+    // 初始化键盘模式为禁用
+    const keyboardMode = document.getElementById('keyboardMode');
+    if (keyboardMode) {
+        keyboardMode.value = 'disabled';
+        config['--keyboard'] = 'disabled';
+        updateCommandPreview();
+    }
+
+    // 初始化鼠标模式为禁用
+    const mouseMode = document.getElementById('mouseMode');
+    if (mouseMode) {
+        mouseMode.value = 'disabled';
+        config['--mouse'] = 'disabled';
+        updateCommandPreview();
+    }
+
+    // 初始化游戏手柄模式为禁用
+    const gamepadMode = document.getElementById('gamepadMode');
+    if (gamepadMode) {
+        gamepadMode.value = 'disabled';
+        config['--gamepad'] = 'disabled';
+        updateCommandPreview();
+    }
+});
